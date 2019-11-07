@@ -1,32 +1,66 @@
+currentBuild.displayName="ManiDeclarativepipeline-#"+currentBuild.number
 pipeline {
-    agent any
-
-    stages {
-        stage ('Compile Stage') {
-
-            steps {
-                withMaven(maven : 'M3') {
-                    sh 'mvn clean compile'
-                }
+    agent none
+     stages {
+         stage('Database') {
+            agent {
+                docker {image 'redis'}
             }
-        }
+             steps{
+              echo 'succsessfully image builded'
+             }
+         }
 
-        stage ('Testing Stage') {
-
-            steps {
-                withMaven(maven : 'M3') {
-                    sh 'mvn test'
-                }
+         stage('hello-world'){
+             agent {
+                 docker {image 'alpine'}
+             }
+         
+             steps {
+                 echo 'successfully build image'
+             }
+         }
+     
+         stage('openjdk'){
+             agent {
+                 docker {image 'openjdk'}
+            
             }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'M3') {
-                    sh 'mvn deploy'
-                }
+         steps{
+             echo 'Successfully build the image'
             }
+             
+         }
+     
+         stage('registry'){
+             agent {
+                 docker {image 'registry'}
+             }
+         steps{
+             echo "successfully build"
+         }
+             
+         }
+     
+         stage('maniengg'){
+             agent {
+                 docker {image 'maniengg/golangrest-api'}
+             }
+        steps{
+            echo 'successfully execute'
         }
+  }
+   
+    stage('Deploy to prod server'){
+        agent{
+            docker {image 'centos'}
+        }
+            steps{
+                echo "successfully"
+         
+        }
+    
     }
+   
+     }
 }
